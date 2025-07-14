@@ -17,9 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $no_factura = $_GET['no_factura'] ?? '';
     $descripcion = $_GET['descripcion'] ?? '';
     $cantidad = $_GET['cantidad'] ?? '';
+    $tablename = $_GET['tablename'] ?? ''; // New variable from GET
+
+    // Check if table name is provided
+    if(empty($tablename)){
+        echo "Error: No table name provided.";
+        exit;
+    }
 
     // Prepare SQL statement for inserting data
-    $stmt = $sqlite->prepare('INSERT INTO <tablename> (quien_recibe, cliente, quien_entrega, no_factura, descripcion, cantidad) VALUES (?, ?, ?, ?, ?, ?)');
+    $stmt = $sqlite->prepare("INSERT INTO $tablename (quien_recibe, cliente, quien_entrega, no_factura, descripcion, cantidad) VALUES (?, ?, ?, ?, ?, ?)");
 
     // Bind parameters
     $stmt->bind_param('ssssss', $quien_recibe, $cliente, $quien_entrega, $no_factura, $descripcion, $cantidad);
@@ -33,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 // Execute a SELECT statement to retrieve data
-$rowset = $sqlite->execute('SELECT * FROM <tablename>');
+$rowset = $sqlite->execute("SELECT * FROM $tablename"); // Use the variable here
 
 // Fetch and display the results
 while ($row = $rowset->fetch_assoc()) {
