@@ -13,13 +13,13 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Obtener datos del formulario
-$quienRecibe = $_POST['quienRecibe'];
-$quienEntrega = $_POST['quienEntrega'];
-$noFactura = $_POST['noFactura'];
-$descripcion = $_POST['descripcion'];
-$cantidad = $_POST['cantidad'];
-$numeroSerie = $_POST['numeroSerie'];
+// Obtener datos del formulario usando GET
+$quienRecibe = $_GET['quienRecibe'];
+$quienEntrega = $_GET['quienEntrega'];
+$noFactura = $_GET['noFactura'];
+$descripcion = $_GET['descripcion'];
+$cantidad = $_GET['cantidad'];
+$numeroSerie = $_GET['numeroSerie'];
 
 // Insertar datos en la tabla
 $sql = "INSERT INTO Guatemala (QuienRecibe, QuienEntrega, NoFactura, Descripcion, Cantidad, NumeroSerie)
@@ -34,4 +34,3 @@ if ($conn->query($sql) === TRUE) {
 // Cerrar conexión
 $conn->close();
 ?>
-
