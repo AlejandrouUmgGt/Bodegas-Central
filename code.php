@@ -1,54 +1,37 @@
 <?php
-require_once 'vendor/autoload.php';
-use SQLiteCloud\SQLiteCloudClient;
+// Conexión a la base de datos
+$servername = "tu_servidor"; // Cambia esto por tu servidor
+$username = "tu_usuario"; // Cambia esto por tu usuario
+$password = "tu_contraseña"; // Cambia esto por tu contraseña
+$dbname = "sql3791785"; // Cambia esto por tu nombre de base de datos
 
-$sqlite = new SQLiteCloudClient();
-$sqlite->connectWithString("sqlitecloud://cvac9ls8nz.g1.sqlite.cloud:8860/Bodegas?apikey=YyIQxMbTom2b4amTVim7SubOOIQFHbFbOnjasyE9uoA");
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check if the request method is GET
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Retrieve parameters from the URL
-    $quien_recibe = $_GET['quien_recibe'] ?? '';
-    $cliente = $_GET['cliente'] ?? '';
-    $quien_entrega = $_GET['quien_entrega'] ?? '';
-    $no_factura = $_GET['no_factura'] ?? '';
-    $descripcion = $_GET['descripcion'] ?? '';
-    $cantidad = $_GET['cantidad'] ?? '';
-    $tablename = $_GET['tablename'] ?? '';
-
-    // Check if table name is provided
-    if (empty($tablename)) {
-        echo "Error: No table name provided.";
-        exit;
-    }
-
-    // Prepare SQL statement for inserting data
-    $stmt = $sqlite->prepare("INSERT INTO $tablename (N_resibe, cliente, N_entrega, factura, descripcion, Cantidad) VALUES (?, ?, ?, ?, ?, ?)");
-
-    // Bind parameters
-    $stmt->bind_param('ssssss', $quien_recibe, $cliente, $quien_entrega, $no_factura, $descripcion, $cantidad);
-
-    // Execute the statement for insertion
-    if ($stmt->execute()) {
-        echo "Datos insertados correctamente.";
-    } else {
-        echo "Error al insertar datos: " . $stmt->error;
-    }
-
-    // Execute a SELECT statement to retrieve data
-    $rowset = $sqlite->execute("SELECT * FROM $tablename");
-
-    // Fetch and display the results
-    while ($row = $rowset->fetch_assoc()) {
-        echo "<p>Quien recibe: " . htmlspecialchars($row['N_resibe']) . "</p>";
-        echo "<p>Cliente: " . htmlspecialchars($row['cliente']) . "</p>";
-        echo "<p>Quien entrega: " . htmlspecialchars($row['N_entrega']) . "</p>";
-        echo "<p>No. Factura: " . htmlspecialchars($row['factura']) . "</p>";
-        echo "<p>Descripcion: " . htmlspecialchars($row['descripcion']) . "</p>";
-        echo "<p>Cantidad: " . htmlspecialchars($row['Cantidad']) . "</p>";
-    }
-
-    // Disconnect from the database
-    $sqlite->disconnect();
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
 }
+
+// Obtener datos del formulario
+$quienRecibe = $_POST['quienRecibe'];
+$quienEntrega = $_POST['quienEntrega'];
+$noFactura = $_POST['noFactura'];
+$descripcion = $_POST['descripcion'];
+$cantidad = $_POST['cantidad'];
+$numeroSerie = $_POST['numeroSerie'];
+
+// Insertar datos en la tabla
+$sql = "INSERT INTO Guatemala (QuienRecibe, QuienEntrega, NoFactura, Descripcion, Cantidad, NumeroSerie)
+VALUES ('$quienRecibe', '$quienEntrega', '$noFactura', '$descripcion', $cantidad, '$numeroSerie')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Nuevo registro creado exitosamente";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+// Cerrar conexión
+$conn->close();
 ?>
+
